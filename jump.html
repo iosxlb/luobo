@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>页面正在加载中...</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    html, body { height: 100%; margin: 0; padding: 0; background: #f7fafd; }
+    body { font-family: "微软雅黑", Arial, sans-serif; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;}
+    .spinner {
+      border: 6px solid #e3eaf2;
+      border-top: 6px solid #1976d2;
+      border-radius: 50%;
+      width: 60px; height: 60px;
+      margin: 30px auto;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    .loading-text {
+      font-size: 2em;
+      color: #222;
+      margin-top: 10px;
+      font-weight: bold;
+      letter-spacing: 2px;
+    }
+    .tips {
+      color: #888; font-size: 1em; margin-top: 28px; text-align: center; line-height: 1.7;
+      max-width: 95vw;
+    }
+    iframe {
+      width: 96vw;
+      max-width: 1200px;
+      height: 70vh;
+      border: 1px solid #e3eaf2;
+      border-radius: 10px;
+      margin-top: 2em;
+      box-shadow: 0 2px 12px #d7e3f4;
+      background: #fff;
+      display: block;
+    }
+  </style>
+  <script>
+    function base64Decode(str) {
+      try {
+        return decodeURIComponent(escape(atob(str)));
+      } catch (e) {
+        return '';
+      }
+    }
+    function getParam(name) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(name);
+    }
+    window.onload = function() {
+      const encoded = getParam('u');
+      if (encoded) {
+        let decoded = base64Decode(encoded);
+        if (!decoded.startsWith("http")) decoded = "https://" + decoded;
+        // 创建iframe
+        var iframe = document.createElement('iframe');
+        iframe.src = decoded;
+        iframe.frameBorder = "0";
+        iframe.allowFullscreen = true;
+        document.body.appendChild(iframe);
+
+        // 加载完毕后隐藏loading文字（可选，也可以一直保留）
+        iframe.onload = function() {
+          document.querySelector('.spinner').style.display = 'none';
+          document.querySelector('.loading-text').style.display = 'none';
+        };
+      } else {
+        document.querySelector('.loading-text').innerText = '未检测到目标网址，无法跳转。';
+      }
+    };
+  </script>
+</head>
+<body>
+  <div class="spinner"></div>
+  <div class="loading-text">页面正在加载中…</div>
+</body>
+</html>

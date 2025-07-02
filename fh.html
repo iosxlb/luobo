@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>防红链接生成器</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: "微软雅黑", Arial, sans-serif; margin: 2em; background: #f8f8f8; }
+    .container { background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #ddd; max-width: 500px; margin: auto; padding: 2em; }
+    input[type="text"] { width: 80%; padding: 8px; font-size: 1em; border-radius: 4px; border: 1px solid #ccc;}
+    button { padding: 8px 18px; font-size: 1em; border-radius: 4px; background: #1976d2; color: #fff; border: none; cursor: pointer;}
+    button:hover { background: #145aa3; }
+    .result { margin-top: 1em; }
+    input[readonly] { background: #f2f2f2; }
+    .tips { font-size: 0.95em; color: #666; margin-top: 1em; }
+  </style>
+  <script>
+    // 检查URL参数，有url则自动跳转
+    window.onload = function() {
+      const params = new URLSearchParams(window.location.search);
+      const target = params.get('url');
+      if (target) {
+        // 防止死循环跳转
+        if (window.location.pathname.endsWith('fh.html')) {
+          window.location.href = decodeURIComponent(target);
+        }
+      }
+    };
+    // 生成防红链接
+    function generate() {
+      const url = document.getElementById('inputUrl').value.trim();
+      if (!url) {
+        alert('请输入目标网址！');
+        return;
+      }
+      // 推荐加 encodeURIComponent 防止特殊字符出错
+      const fhLink = window.location.origin + window.location.pathname + '?url=' + encodeURIComponent(url);
+      document.getElementById('result').value = fhLink;
+    }
+    // 一键复制
+    function copyLink() {
+      const result = document.getElementById('result');
+      if (result.value) {
+        result.select();
+        document.execCommand('copy');
+        alert('已复制到剪贴板！');
+      }
+    }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h2>防红链接生成器</h2>
+    <div>
+      <input id="inputUrl" type="text" placeholder="请输入要防红跳转的网址，如 https://www.baidu.com">
+      <button onclick="generate()">生成防红链接</button>
+    </div>
+    <div class="result">
+      <input id="result" type="text" readonly placeholder="生成的防红链接会显示在这里">
+      <button onclick="copyLink()">复制链接</button>
+    </div>
+    <div class="tips">
+      使用方法：<br>
+      1. 输入目标网址，点击“生成防红链接”<br>
+      2. 复制下方生成的防红链接并分享给好友<br>
+      3. 对方打开防红链接后会自动跳转到目标网址，实现防红<br>
+      <br>
+      <b>提示：</b>本工具基于GitHub Pages静态跳转，安全简单。
+    </div>
+  </div>
+</body>
+</html>
